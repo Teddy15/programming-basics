@@ -27,17 +27,13 @@ struct song {
 // Return 1 if it is empty,
 // else return 0.
 // =========================================
-int isEmpty(int size) {
-    return size == 0;
-}
+int isEmpty(int);
 
 // =========================================
 // Checks if the playlist is full.
 // Return 1 if it is full, else return 0.
 // =========================================
-int isFull(int size, int capacity) {
-    return size == capacity;
-}
+int isFull(int, int);
 
 // =========================================
 // Add a song to a playlist.
@@ -47,6 +43,18 @@ int isFull(int size, int capacity) {
 // name, singer AND genre - display the message 
 // 'The song with name: %s, singer: %s, and genre: %s is already in the playlist!!!\n'
 // =========================================
+void add_to_playlist(struct song* playlist, struct song song, int* size);
+
+// =========================================
+// Remove a song from the playlist.
+// Make sure you don't remove a song
+// from an empty playlist with 0 songs.
+// If there is no such song in the playlist,
+// display the messgage 
+// 'No such song with name: %s, singer: %s, and genre: %s!!!\n' 
+// =========================================
+void remove_from_playlist(struct song* playlist, struct song song, int* size);
+
 void add_to_playlist(struct song* playlist, struct song song, int* size) {
     if(!isFull(*size, MAX)) {
         for (int i = 0; i < *(size); i++) {
@@ -64,15 +72,51 @@ void add_to_playlist(struct song* playlist, struct song song, int* size) {
     }
 }
 
-// =========================================
-// Remove a song from the playlist.
-// Make sure you don't remove a song
-// from an empty playlist with 0 songs.
-// If there is no such song in the playlist,
-// display the messgage 
-// 'No such song with name: %s, singer: %s, and genre: %s!!!\n' 
-// =========================================
-void remove_from_playlist(struct song* playlist, struct song song, int* size);
+void remove_from_playlist(struct song* playlist, struct song song, int* size) {
+    int counter = 0;
+    
+    if(isEmpty(*size)) {
+        printf("Cannot remove from empty playlist!!!\n");
+        return;
+    }
+    int check = 0;
+    for (int i = 0; i < *(size); i++) {
+        if(strcmp(playlist[i].song_name, song.song_name) == 0 &&
+            strcmp(playlist[i].singer, song.singer) == 0 &&
+            strcmp(playlist[i].genre, song.genre) == 0) {
+               check = 1; 
+        }
+    }
+
+    if (!check) {
+        printf("No such song with name: %s, singer: %s, and genre: %s!!!\n", song.song_name, song.singer, song.genre);
+        return;
+    }
+        
+    for(int i = 0; i < *(size); i++) {
+        if(strcmp(playlist[i].song_name, song.song_name) == 0 &&
+            strcmp(playlist[i].singer, song.singer) == 0 &&
+            strcmp(playlist[i].genre, song.genre) == 0) {
+                continue;
+        } else { 
+            playlist[counter].song_name = playlist[i].song_name;
+            playlist[counter].singer = playlist[i].singer;
+            playlist[counter].genre = playlist[i].genre;
+            counter++;
+        }
+    }
+
+    *(size) = *(size) - 1;
+    printf("Successfully remove the song! The current size of the playlist is: %d\n", *size);
+}
+
+int isEmpty(int size) {
+    return size == 0;
+}
+
+int isFull(int size, int capacity) {
+    return size == capacity;
+}
 
 int main() {
     // Add 5 songs to the playlist
@@ -111,6 +155,25 @@ int main() {
         printf("Playlist[%d] song name: %s\n", size-1, playlist[size-1].song_name);
         printf("Playlist[%d] singer: %s\n", size-1, playlist[size-1].singer);
         printf("Playlist[%d] genre: %s\n", size-1, playlist[size-1].genre);
+
     }
+
+    while (size > 0) {
+        struct song song;
+        
+        song.song_name = (char*)malloc(sizeof(char) * 20);
+        song.singer = (char*)malloc(sizeof(char) * 20);
+        song.genre = (char*)malloc(sizeof(char) * 20);
+        
+        printf("Enter song name:");
+        scanf("%s", song.song_name);
+        printf("Enter singer name:");
+        scanf("%s", song.singer);
+        printf("Enter genre:");
+        scanf("%s", song.genre);
+        
+        remove_from_playlist(playlist, song, &size);
+    }
+    printf("Size: %d\n", size);
     return 0;
 }
