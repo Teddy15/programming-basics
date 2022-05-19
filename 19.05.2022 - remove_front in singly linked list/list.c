@@ -81,10 +81,32 @@ int remove_front(struct Node** head) {
     return 0;
 }
 
-// node1 node2 node3
-// node1->next->next == NULL
-// node2->next->next == NULL -> node2 = node2->next;
-//                     node2->next = NULL;
+int remove_back(struct Node** head) {
+    if(*head == NULL) {
+        printf("Underflow! The list is empty, can't remove an element!\n");
+        return -100;
+    }
+
+    if((*head)->next == NULL){
+        (*head) = NULL;
+        return 0;
+    }
+
+    struct Node* node = *head;
+
+    while(node->next->next != NULL){
+        node = node->next;
+    }
+
+    node->next = NULL;
+    return node->data;
+// Do someting
+// node1 node2 node3 -> list
+// 1) node1->next->nex  t != NULL -> the loop goes on
+// 2)  node2->next->next == NULL -> node2 = node2->next;
+//                                  node2->next = NULL;
+}
+
 int main() {
     struct Node* head = NULL;
 
@@ -108,6 +130,10 @@ int main() {
     print_list(head);
 
     printf("Remove_front called: %d\n", remove_front(&head));
+
+    print_list(head);
+
+    printf("Remove_back called: %d\n", remove_back(&head));
 
     print_list(head);
 
